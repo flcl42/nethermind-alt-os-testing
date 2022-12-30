@@ -1,0 +1,21 @@
+FROM centos:7
+
+RUN yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+RUN yum install -y glibc-devel bzip2-devel libzstd git
+RUN rpm -Uvh https://packages.microsoft.com/config/centos/7/packages-microsoft-prod.rpm
+RUN yum install -y dotnet-sdk-6.0
+RUN sudo ln -s `find /usr/lib64/ -type f -name "libbz2.so.1*"` /usr/lib64/libbz2.so.1.0
+
+COPY ./nethermind/ .
+RUN git config --global --add safe.directory /nethermind
+RUN dotnet build src/Nethermind/Nethermind.Runner -c release -o /out
+
+EXPOSE 8545
+EXPOSE 8551
+EXPOSE 30303
+
+VOLUME /nethermind/nethermind_db
+VOLUME /nethermind/logs
+VOLUME /nethermind/keystore
+
+ENTRYPOINT ["/out/Nethermind.Runner"]
