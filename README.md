@@ -1,7 +1,7 @@
 ```
 cd nethermind
 git checkout master # or a branch you want to test
-
+cd ..
 # Centos 8
 
 docker build . -f Dockerfile.centos -t nethermind:centos
